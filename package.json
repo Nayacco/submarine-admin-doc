@@ -1,0 +1,15 @@
+{
+  "name": "submarine-admin-doc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/GoldSubmarine/submarine-admin-doc.git",
+  "author": "GoldSubmarine <997462392@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+  "dependencies": {
+    "vuepress": "^1.4.0"
+  }
+}
