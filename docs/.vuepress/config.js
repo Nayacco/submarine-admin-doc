@@ -1,6 +1,6 @@
 module.exports = {
     title: 'submarine', // 设置网站标题
-    base: '/submarine-admin/',
+    base: '/submarine-admin-doc/',
     description: '快速开发，早点下班', //描述
     locales: { '/': { lang: 'zh-CN' }},
     //dest: './dist',   // 设置输出目录
