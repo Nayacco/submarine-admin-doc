@@ -79,9 +79,9 @@ new AuthorizationListener() {
 并且 socket-io 本身重连不需要二次验证也是靠 cookie 实现的，可以发现 socket-io 往浏览器写入了一个 cookie，重连时只要 cookie 在后端的 session 中，就允许连接
 
 ::: warning 注意
-确保 spring security 设置的 cookie 的 path 和 socket 连接时的 path 一致
 
-建议使用火狐调试，chrome 虽然也发送了 cookie ，但是不显示在控制台
+- 确保 spring security 设置的 cookie 的 path 和 socket 连接时的 path 一致
+- 建议使用火狐调试，chrome 虽然也发送了 cookie ，但是不显示在控制台
 :::
 
 ## 启动和关闭

@@ -64,6 +64,9 @@ module.exports = {
             children: [
               'generator',
               'socket',
+              'excel',
+              'word',
+              'i18n',
             ]
           },
         ]
