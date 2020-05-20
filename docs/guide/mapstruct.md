@@ -28,7 +28,7 @@ lombok 中已经提过配合使用的问题，下面贴一下具体配置：
 
 <properties>
     <java.version>1.8</java.version>
-    <org.mapstruct.version>1.3.0.Final</org.mapstruct.version>
+    <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
 </properties>
 
 <!-- dependency -->
@@ -36,11 +36,6 @@ lombok 中已经提过配合使用的问题，下面贴一下具体配置：
 <dependency>
     <groupId>org.mapstruct</groupId>
     <artifactId>mapstruct</artifactId>
-    <version>${org.mapstruct.version}</version>
-</dependency>
-<dependency>
-    <groupId>org.mapstruct</groupId>
-    <artifactId>mapstruct-jdk8</artifactId>
     <version>${org.mapstruct.version}</version>
 </dependency>
 <dependency>

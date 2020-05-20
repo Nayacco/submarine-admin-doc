@@ -1,34 +1,62 @@
-# 日期格式处理
+# 日期处理
 
 ## 使用 Java8 日期
 
-Java8 引入了新的日期类型，以后，新日期的类型应该会越来越普通的使用。现在准备在项目里也使用 java8 的日期。
-
-Bean 里的时间字段用`Instant`，具体原因下一节会说明。
+Java8 新的日期类型对时区和类型之间转换都能友好支持，所以我们采用 `LocalDateTime`
 
 ## 国际化情况下的日期使用
 
-假设一个服务部署到了某一时区上的机器上，它会为同一时区，或者不同时区的用户提供服务。
+前后端之间传递的都是 unix 时间戳，unix 时间戳指的是零时区 1970-1-1 起所经过的秒数，所以后端接收到时间戳后，把它转换为一个东八区的 `LocalDateTime` ，这样后台系统就不用再考虑时区的问题，因为在系统的最前方反序列化的过程中已经完成了时区的转换，系统内部所有的时间都是东八区的，包括数据库。
 
-国际化过程中，需要注意两点：
+后端给前端反数据时，将 `LocalDateTime` 转换为时间戳，前端获取到时间戳后，根据时区转换成相应的时间展示给用户。
 
-1. 日期格式数据在处理过程中，不能有信息丢失（类似精度丢失，或者编码转换过程中的数据损失），具体来说就是时区的丢失
-2. 日期展现，比如需要格式化，在前端根据自己的本地环境做。后端处理过程中，使用 Unix 时间戳，或跟 Unix 时间戳等价的时间格式就可以了。
+:::tip 建议
+在不需要国际化的情况下，后端可以以 `yyyy-MM-dd HH:mm:ss` 的形式返给前端，方便前端展示
+:::
 
-满足了上述两点就能保证日期格式处理，不会出问题。
+## 代码实现
 
-具体方案如下：
+```java
+@JsonComponent
+public class DateFormatConfig {
 
-1. 用户在前台选择了日期，如 `2019-1-1`，表示是用户电脑所在时区的`2019-1-1`，传给后台的时候，要转成 unix 时间戳传给后台。
-2. 后台接受 unix 时间戳之后，可以选择用 Instant 或者`LocalDateTime`+指定时区为东八区 来处理。指定东八区而不是系统时区是因为不同的机器所在时区可能是不同的，指定东八区既固定了时区，也方便我们使用。 但是，系统后台用 `LocalDateTime`，除了 debug 时方便看时间外，没什么用，还增加了一个转换环节，即将前台的 unix 时间戳转换成`LocalDateTime`。因此，**建议直接使用`Instant`**
-3. 数据库字段使用`datetime`字段。不使用`timestamp`字段的原因是`timestamp`字段最大到 2038 年。不用数字的原因，是方便查询数据用。但是由于 datetime 不含时区信息，因此，我们在存入数据库的时候，要指定时区为**东八区**来转换。这个需要在 mybatis 里进行配置。
-4. 另外还有一点：数据库表示时区的变量，最好直接指定时区，不要用系统时区。用系统时区可能 mysql 每次在转换的时候，查一下系统时区，带来额外的开销。这个时区变量跟`timestamp`有关，跟`datetime`无关。时区变量变了，`timestamp`的展示会自动变，但是`datetime`不会。虽然我们不用`timestamp`，但是无论数据库的服务器在哪个时区，我们都指定成东八区也是比较合理的。
+    private DateFormatConfig() {}
 
-在上面的方案下，假设有两个用户，一个中国用户，一个日本用户。
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-1. 在同一时刻（北京时间晚上 6 点、日本时间晚上 7 点），两个用户都在使用系统
-2. 两个用户都在页面上，通过时间选择器，选择时间。默认选择的都是当前时间，北京用户选择了 6 点(`2019-11-11 18:00`)，日本用户选择了 7 点(`2019-11-11 19:00`)。然后提交表单。
-3. 前台将用户选择的时间格式字符串转换成 **同一个 unix 时间戳**(`1573466400`) 传给后台
-4. 后台用`Instant`接受，不需要日期转换。然后保存到数据，此时按照**固定的东八区**的时区来格式化时间，都转换成了 **北京时间晚上 6 点**(`2019-11-11 18:00`)保存到数据库了。我们在数据库里看到的是，两个用户都在北京时间 6 点(`2019-11-11 18:00`)新建了一条记录。
-5. 当用户查询这条记录的时候，从数据库里查询到的是 **北京时间晚上 6 点**字符串(`2019-11-11 18:00`)，转换到 Bean 的 Instant 字段的时候，按照**固定的东八区**时区来解析，解析成`1573466400`，然后交给前台。
-6. 两个用户的前台浏览器，根据各自的时区，分别将`1573466400`格式化成`2019-11-11 18:00`（中国用户）和`2019-11-11 19:00`(日本用户)。这个过程对用户是不感知的。
+    /**
+     * 日期格式化为字符串
+     */
+    public static class DateJsonSerializer extends JsonSerializer<LocalDateTime> {
+        @Override
+        public void serialize(LocalDateTime localDateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeString(dateTimeFormatter.format(localDateTime));
+        }
+    }
+
+    /**
+     * 解析日期字符串
+     * 同时支持 yyyy-MM-dd HH:mm:ss 和 时间戳
+     */
+    public static class DateJsonDeserializer extends JsonDeserializer<LocalDateTime> {
+        @Override
+        public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            String value = jsonParser.getText();
+
+            String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+            String timeStampFormat = "^\\d+$";
+
+            if(StringUtils.isEmpty(value)) {
+                return null;
+            }
+            if(value.matches(dateTimeFormat)) {
+                return LocalDateTime.parse(value, dateTimeFormatter);
+            }
+            if(value.matches(timeStampFormat)) {
+                return LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(value)), ZoneId.of(GlobalConst.TIME_ZONE_ID));
+            }
+            return null;
+        }
+    }
+}
+```

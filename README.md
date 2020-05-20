@@ -2,7 +2,7 @@
 
 The documentation source of submarine-admin
 
-[Online](https://GoldSubmarine.io/submarine-admin-doc)
+[Online](https://GoldSubmarine.github.io/submarine-admin-doc)
 
 ## Development
 

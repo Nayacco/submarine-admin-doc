@@ -54,7 +54,7 @@ module.exports = {
               'jwt',
               'lombok',
               'mapstruct',
-              'exception-handle-date',
+              'exception',
               'date'
             ]
           },
@@ -62,11 +62,13 @@ module.exports = {
             title: '功能',
             collapsable: false,
             children: [
+              'format',
               'generator',
               'socket',
               'excel',
               'word',
               'i18n',
+              'file',
             ]
           },
         ]

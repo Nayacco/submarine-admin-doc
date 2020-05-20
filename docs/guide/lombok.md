@@ -41,7 +41,7 @@ lombok.equalsAndHashCode.callSuper=call
 lombok.toString.callSuper=call
 ```
 
-**注意：**在低版本的 Lombok 中，lombok.toString.callSuper=call 不生效，经过测试 在 1.18.8 中可以使用
+**注意：** 在低版本的 Lombok 中，lombok.toString.callSuper=call 不生效，经过测试 在 1.18.8 中可以使用
 
 ## lombok.config 配置文件作用范围
 

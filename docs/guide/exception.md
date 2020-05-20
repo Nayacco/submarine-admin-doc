@@ -1,6 +1,8 @@
-# 日期映射和异常捕获
+# 异常捕获
 
-## 作用
+系统中的异常需要统一的捕获，并以统一的格式返给前端，下面来谈一谈如何统一处理异常
+
+## @ControllerAdvice
 
 @ControllerAdvice，是 Spring3.2 提供的新注解
 
@@ -9,8 +11,6 @@
 - 在 Spring4 中， @ControllerAdvice 通过 annotations(), basePackageClasses(), basePackages()方法定制用于选择控制器子集。
 
 简单来说就是给所有的 Controller 加上统一的 @ExceptionHandler 或 @InitBinder 或 @ModelAttribute 处理。
-
-## 统一异常处理
 
 ```java
 @Slf4j
@@ -52,69 +52,6 @@ public class GlobalExceptionHandler {
 
 以上只是 demo 展示，最佳实战请见另一篇博客 [spring 统一异常处理](https://goldsubmarine.github.io/2019/09/08/spring-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%8F%8A%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/)
 
-## 统一日期映射处理
+## spring 底层的 API
 
-```java
-@ControllerAdvice
-public class ControllerHandler {
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormat.setLenient(false);
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
-    }
-
-}
-```
-
-相当于给所有的 controller 加了 initBinder，这样就可以自定义映射时间到 bean 中。还有一种通过 Converter 的写法：
-
-```java
-// ControllerHandler.java
-@ControllerAdvice
-public class ControllerHandler {
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        GenericConversionService genericConversionService = (GenericConversionService) binder.getConversionService();
-        if (genericConversionService != null) {
-            genericConversionService.addConverter(new DateConverter());
-        }
-    }
-
-}
-
-// DateConverter.java
-public class DateConverter implements Converter<String, Date> {
-    private static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
-    private static final String shortDateFormat = "yyyy-MM-dd";
-    private static final String timeStampFormat = "^\\d+$";
-
-    @Override
-    public Date convert(String value) {
-        if(StringUtils.isEmpty(value)) {
-            return null;
-        }
-        value = value.trim();
-        try {
-            if (value.contains("-")) {
-                SimpleDateFormat formatter;
-                if (value.contains(":")) {
-                    formatter = new SimpleDateFormat(dateFormat);
-                } else {
-                    formatter = new SimpleDateFormat(shortDateFormat);
-                }
-                return formatter.parse(value);
-            } else if (value.matches(timeStampFormat)) {
-                Long lDate = new Long(value);
-                return new Date(lDate);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("格式化时间 %s 失败", value));
-        }
-        throw new RuntimeException(String.format("格式化时间 %s 失败", value));
-    }
-
-}
-```
+spring 有一个更底层的api，即 `/error` 路径
