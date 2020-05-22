@@ -1,6 +1,6 @@
 # 异常捕获
 
-系统中的异常需要统一的捕获，并以统一的格式返给前端，下面来谈一谈如何统一处理异常
+系统中的异常需要统一的捕获，并以统一的格式返给前端，下面来谈一谈如何统一处理异常，本项目使用的第二种处理方式
 
 ## @ControllerAdvice
 
@@ -50,8 +50,12 @@ public class GlobalExceptionHandler {
 
 上面的代码中可以看到通过 @RestControllerAdvice 注解，将上面的三种异常处理加到了所有的 controller 上，这样就能捕获所有能到达 controller 层的异常。
 
+缺点是 Controller 之前的异常无法捕获（比如 Filter）
+
 以上只是 demo 展示，最佳实战请见另一篇博客 [spring 统一异常处理](https://goldsubmarine.github.io/2019/09/08/spring-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%8F%8A%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/)
 
 ## spring 底层的 API
 
-spring 有一个更底层的api，即 `/error` 路径
+这里我们采用 spring 更底层的 API 处理，即所有错误都会转发到 `/error` 路径的 Controller 上。
+
+自定义实现可以参考 spring 的 `BasicErrorController` 类，本项目的实现为 `GlobalErrorController`，它捕获到所有的异常后，如果是我们自定义的 ServiceException 则直接返回，如果是前端参数反序列化错误，则返回“参数绑定错误”，其他异常则返回“内部异常”

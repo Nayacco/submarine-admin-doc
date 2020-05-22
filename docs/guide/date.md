@@ -4,6 +4,11 @@
 
 Java8 新的日期类型对时区和类型之间转换都能友好支持，所以我们采用 `LocalDateTime`
 
+:::warning 注意
+如果 mybatis core 低于 3.4.5 版本，需要手动引入 `mybatis-typehandlers-jsr310` 用于映射转换  
+本项目为高版本，无需引入
+:::
+
 ## 国际化情况下的日期使用
 
 前后端之间传递的都是 unix 时间戳，unix 时间戳指的是零时区 1970-1-1 起所经过的秒数，所以后端接收到时间戳后，把它转换为一个东八区的 `LocalDateTime` ，这样后台系统就不用再考虑时区的问题，因为在系统的最前方反序列化的过程中已经完成了时区的转换，系统内部所有的时间都是东八区的，包括数据库。
@@ -22,41 +27,48 @@ public class DateFormatConfig {
 
     private DateFormatConfig() {}
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter dateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /**
-     * 日期格式化为字符串
-     */
+    /** 日期格式化为字符串 */
     public static class DateJsonSerializer extends JsonSerializer<LocalDateTime> {
+
         @Override
-        public void serialize(LocalDateTime localDateTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        public void serialize(
+                LocalDateTime localDateTime,
+                JsonGenerator jsonGenerator,
+                SerializerProvider serializerProvider)
+                throws IOException {
             jsonGenerator.writeString(dateTimeFormatter.format(localDateTime));
         }
     }
 
-    /**
-     * 解析日期字符串
-     * 同时支持 yyyy-MM-dd HH:mm:ss 和 时间戳
-     */
+    /** 解析日期字符串 */
     public static class DateJsonDeserializer extends JsonDeserializer<LocalDateTime> {
+
         @Override
-        public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        public LocalDateTime deserialize(
+                JsonParser jsonParser, DeserializationContext deserializationContext)
+                throws IOException {
             String value = jsonParser.getText();
 
             String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
             String timeStampFormat = "^\\d+$";
 
-            if(StringUtils.isEmpty(value)) {
+            if (StringUtils.isEmpty(value)) {
                 return null;
             }
-            if(value.matches(dateTimeFormat)) {
+            if (value.matches(dateTimeFormat)) {
                 return LocalDateTime.parse(value, dateTimeFormatter);
             }
-            if(value.matches(timeStampFormat)) {
-                return LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(value)), ZoneId.of(GlobalConst.TIME_ZONE_ID));
+            if (value.matches(timeStampFormat)) {
+                return LocalDateTime.ofInstant(
+                        Instant.ofEpochSecond(Long.parseLong(value)),
+                        ZoneId.of(GlobalConst.TIME_ZONE_ID));
             }
             return null;
         }
     }
 }
+
 ```
