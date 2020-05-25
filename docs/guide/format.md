@@ -34,6 +34,18 @@ git config --global core.eol lf
 
 对于已有的项目，想要把所有的文件改成 LF 换行，可以在 idea 中左键选中项目根文件夹，然后点击 `File => File ProperTies => Line Separator` 即可全局更改成功
 
+也可以修改 idea 的默认格式风格为 google-java-format ，配合 `Action Save` 插件，每次保存时自动格式化代码，这样就能提前看到最后格式化完的代码，而不是提交时依靠 git hook 格式化，可能最后的代码格式会超出你的预期。这里不要安装 google-java-format 插件，因为它无法自定义配置，且无法对导入的包排序，所以可以执行下载 [intellij-java-google-style](https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml)，并修改文件内容（如下），缩进 4 格，最后导入到 idea 中 `File => Settings => Editor => Code Style`.
+
+```xml
+<codeStyleSettings language="CSS">
+    <indentOptions>
+        <option name="INDENT_SIZE" value="4" />
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
+        <option name="TAB_SIZE" value="4" />
+    </indentOptions>
+</codeStyleSettings>
+```
+
 ::: warning 注意
 
 1. 手动执行 `mvn git-code-format:format-code -Dgcf.globPattern=**/*`

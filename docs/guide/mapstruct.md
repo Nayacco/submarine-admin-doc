@@ -15,13 +15,13 @@
 |         Spring         |       否        |    否    |       否       |          不支持          |  高  |
 |         hutool         |       否        |    是    |       否       |          不支持          |  高  |
 
-最后选择了 MapStruct
+还有非常重要的一点是，如果是嵌套的结构，比如 List 里面套 List\<User>，而 User 有一个字段是 password，显然我们不想把密码暴露出去，MapStruct 能帮你把嵌套的结构都转成相应的 Dto，有时一些特殊的转换逻辑，例如 userList 转 userIds，我们可以把这种逻辑写在 Mapstruct 文件里，实现转换逻辑和业务代码的分离，所以最终选择 MapStruct
 
 具体使用参看[官方文档](https://mapstruct.org/)
 
 ## 配置
 
-lombok 中已经提过配合使用的问题，下面贴一下具体配置：
+首先在 idea 中安装 mapstruct 的插件，然后再 pom 中添加以下配置：
 
 ```xml
 <!-- properties -->
