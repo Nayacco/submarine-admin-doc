@@ -21,6 +21,8 @@ Java8 新的日期类型对时区和类型之间转换都能友好支持，所�
 
 ## 代码实现
 
+对于通过 @requestBody 反序列化的对象，可以使用 Jackson 提供的全局解析方式：
+
 ```java
 @JsonComponent
 public class DateFormatConfig {
@@ -70,5 +72,54 @@ public class DateFormatConfig {
         }
     }
 }
-
 ```
+
+对于直接 param 映射的对象，需要配合 @InitBinder 和  @ControllerAdvice 注解重写反序列化逻辑，如下：
+
+```java
+// ParamFormatConfig.java
+@Component
+public class ParamFormatConfig implements Converter<String, LocalDateTime> {
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT_REGEXP = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}";
+    private static final String TIME_STAMP_FORMAT_REGEXP = "^\\d+$";
+    private static final DateTimeFormatter dateTimeFormatter =
+            DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+    // param格式化（http url）
+    @Override
+    public LocalDateTime convert(@Nullable String value) {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        if (value.matches(DATE_FORMAT_REGEXP)) {
+            return LocalDateTime.parse(value, dateTimeFormatter);
+        }
+        if (value.matches(TIME_STAMP_FORMAT_REGEXP)) {
+            return LocalDateTime.ofInstant(
+                    Instant.ofEpochSecond(Long.parseLong(value)),
+                    ZoneId.of("+8"));
+        }
+        throw new ServiceException(ResultStatus.FORMAT_ERROR);
+    }
+}
+
+// ControllerHandler.java
+@ControllerAdvice
+public class ControllerHandler {
+
+    @Resource private ParamFormatConfig paramFormatConfig;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        GenericConversionService genericConversionService =
+                (GenericConversionService) binder.getConversionService();
+        if (genericConversionService != null) {
+            genericConversionService.addConverter(paramFormatConfig);
+        }
+    }
+}
+```
+
+本项目把他们合并写在 `DateFormatConfig.java` 和 `ControllerHandler.java` 中，具体见代码详情

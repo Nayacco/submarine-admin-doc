@@ -45,7 +45,7 @@ lombok.toString.callSuper=call
 
 ## lombok.config 配置文件作用范围
 
-`lombok.config` 配置文件只对父类目录下的所有 `java` 文件才生效，所以在 spring 项目中，无法将配置文件放在 resource 文件夹下，需要放在 `src/main/java` 文件夹下，或者和启动类放在一起。
+`lombok.config` 配置文件只对父类目录下的所有 `java` 文件才生效，所以在 spring 项目中，无法将配置文件放在 resource 文件夹下，建议放在项目跟路径。
 
 Lombok 不仅适用于 spring 项目，它适用于所有的 java 项目，所以对作用范围进行这样的设定。
 
