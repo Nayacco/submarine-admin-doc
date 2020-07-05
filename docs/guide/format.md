@@ -46,8 +46,6 @@ git config --global core.eol lf
 </codeStyleSettings>
 ```
 
-::: warning 注意
+## checkstyle
 
-1. 手动执行 `mvn git-code-format:format-code -Dgcf.globPattern=**/*`
-2. 如果上述步骤仍然失败，则去除掉阿里云的镜像，重复执行第一步  
-   :::
+[checkstyle](https://github.com/checkstyle/checkstyle)
