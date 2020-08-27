@@ -6,7 +6,9 @@ camunda 公司早期是 Activiti 主要的代码贡献者之一，2012 年末，
 
 2017 期间 activiti 团队内部已经产生了重大的分歧，核心开发者均离职，在 Activiti6 的基础上，又分裂出一个分支，即 Flowable。
 
-Activiti 的代码和 Flowable 有很大一部分是相同的，Activiti7 已经向云的方向发展，而 Flowable 则继续打磨细节，增加功能，又因为原有的核心开发者都转到了 Flowable，所以这里我们选型 Flowable
+Activiti 的代码和 Flowable 有很大一部分是相同的，Activiti7 已经向云的方向发展，而 Flowable 则继续打磨细节，增加功能.
+
+因为原有的核心开发者都转到了 Flowable，Flowable 的核心功能更加强大，所以这里我们选型 Flowable
 
 ## 概念
 
