@@ -10,11 +10,11 @@
 
 代码格式化有多种方案，总体分为两类：强格式化和弱格式化
 
-强格式化：能对包排序、智能换行、统一缩进、空行移除等，这类工具有 google-java-format 和 prettier
+- 强格式化：能对包排序、智能换行、统一缩进、空行移除等，这类工具有 `google-java-format` 和 `prettier`
 
-弱格式化：只能根据简单编辑器规则格式化代码，常见的方式是自己配置一个 idea-style.xml 或 eclipse-style.xml 放在某些 maven plugin 下，这类工具效果往往较差，不符合我们的预期，例如阿里的 p3c、checkstyle(只校验)等
+- 弱格式化：只能根据简单编辑器规则格式化代码，常见的方式是自己配置一个 `idea-style.xml` 或 `eclipse-style.xml` 放在某些 maven plugin 下，这类工具效果往往较差，不符合我们的预期，例如阿里的 p3c、checkstyle(只校验)等
 
-我们选用强格式化工具，下面对两者进行比较：
+我们选用强格式化工具，下面对两者进行比较.
 
 ## google-java-format
 
@@ -23,7 +23,7 @@ google-java-format 是一种规范，也就是对各种场景应该如何格式�
 它在 java 领域经历了充分的讨论，并且应用十分广泛，各类 IDE 插件、maven 插件都能较好的支持。但是实际使用中有一些缺点：
 
 - 不支持自定义规则，其中最大的问题是每行的最大长度强制限制为 100 个字符，遇到 stream 这种比较长的嵌套链式写法，会把代码切割的非常非常碎，直接影响了代码的阅读。
-- 限定 100 个字符原因是，在 13 寸的屏幕下，横向不会出现滚动条，直接就能看到所有代码，但是我们办公往往使用的 24 寸显示器，限定 100 个字符使屏幕右侧产生一大块的空白，没有有效利用屏幕空间。
+- 限定 100 个字符原因是：在 13 寸的屏幕下，横向不会出现滚动条，直接就能看到所有代码，但是办公环境往往使用 24 寸显示器，限定 100 个字符使屏幕右侧产生一大块的空白，没有有效利用屏幕空间。
 
 综上，这里我们没有采用 google-java-format，因为它的缺点直接影响了代码的阅读，问题十分严重。
 
@@ -31,11 +31,11 @@ google-java-format 是一种规范，也就是对各种场景应该如何格式�
 
 ## prettier
 
-prettier 是 facebook 开发的格式化代码工具，在前端有广泛的使用，同时它架构上采用插件机制，通过插件实现了几乎所有语言的格式化。是当下非常热门的代码格式化工具。
+[prettier](https://github.com/prettier/prettier) 是 facebook 开发的格式化代码工具，在前端有广泛的使用，同时它架构上采用插件机制，通过插件实现了几乎所有语言的格式化，是当下非常热门的代码格式化工具。
 
 prettier 相比于 google-java-format 也有一个缺点，就是无法移除无效引用（unused import），不过该缺点还好，不算大问题
 
-这里我们采用它的 java 实现[prettier-java](https://github.com/jhipster/prettier-java)
+这里我们采用它的 java 实现 [prettier-java](https://github.com/jhipster/prettier-java)
 
 首先在 pom 中引入 plugin 插件
 
@@ -50,7 +50,7 @@ prettier 相比于 google-java-format 也有一个缺点，就是无法移除无
 </plugin>
 ```
 
-然后在根目录对添加自定义规则文件
+然后在根目录对添加自定义规则文件 `.prettierrc.yml`
 
 ```yml
 # .prettierrc.yml
@@ -68,7 +68,7 @@ overrides:
 
 ## git hook
 
-每次手动格式化是不现实的，我们期望每次提交代码时，无感自动格式化代码。所以这里采用 git hook 的机制，git hook 默认位置为 `.git/hooks` 下，该配置无法实现 git 同步，所以我们在项目根目录创建 hooks 文件夹，并添加 `pre-commit` 文件如下(参考[Shell script](https://prettier.io/docs/en/precommit.html#option-5-shell-script))：
+每次手动格式化是不现实的，我们期望每次提交代码时，无感的自动格式化代码。所以这里采用 git hook 的机制，git hook 默认位置为 `.git/hooks` 下，该配置无法实现 git 同步，所以我们在项目根目录创建 hooks 文件夹，并添加 `pre-commit` 文件如下(参考[Shell script](https://prettier.io/docs/en/precommit.html#option-5-shell-script))：
 
 ```bash
 #!/bin/sh
