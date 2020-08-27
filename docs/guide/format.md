@@ -66,6 +66,10 @@ overrides:
 
 执行 `mvn prettier:write` 即可格式化项目代码
 
+:::warning 注意
+prettier-java 采用了 Google 的包排序机制，它和 idea 的排序机制冲突，所以要对 idea 的包排序进行配置，参见 [organize-imports](https://github.com/jhipster/prettier-java#organize-imports)
+:::
+
 ## git hook
 
 每次手动格式化是不现实的，我们期望每次提交代码时，无感的自动格式化代码。所以这里采用 git hook 的机制，git hook 默认位置为 `.git/hooks` 下，该配置无法实现 git 同步，所以我们在项目根目录创建 hooks 文件夹，并添加 `pre-commit` 文件如下(参考[Shell script](https://prettier.io/docs/en/precommit.html#option-5-shell-script))：
