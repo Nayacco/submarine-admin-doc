@@ -13,6 +13,8 @@ git clone https://github.com/GoldSubmarine/submarine-admin-backend.git
 自身的业务开发建议在 `com.htnova` 下新建一个包，方便后续对本项目进行升级
 :::
 
+执行一下 `mvn compile` 命令，用于注册 git hook
+
 ## 前端
 
 ```bash
@@ -42,4 +44,4 @@ yarn dev
 
 前端启动后，打开 `http://localhost:9528/` ，管理员账户为 admin，密码为 123456
 
-前端本地相当于起了一个web服务，并把前端的请求转发到后端，可以在 `vue.config.js` 中配置 `proxy.target` 到指定的后端服务上
+前端本地相当于起了一个 web 服务，并把前端的请求转发到后端，可以在 `vue.config.js` 中配置 `proxy.target` 到指定的后端服务上
