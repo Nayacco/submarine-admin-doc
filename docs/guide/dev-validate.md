@@ -1,4 +1,4 @@
-# 代码漏洞校验
+# 漏洞检测
 
 项目目前使用 [classgraph](https://github.com/classgraph/classgraph) ，在 dev 环境下对当前项目的类进行扫描，从而检测出常见的 bug，并将校验结果打印在控制台。目前实现了以下常见 bug 的校验（代码位于 `com.htnova.common.dev` 目录下）：
 
