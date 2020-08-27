@@ -62,6 +62,7 @@ module.exports = {
             title: '功能',
             collapsable: false,
             children: [
+              'deploy',
               'format',
               'generator',
               'socket',
