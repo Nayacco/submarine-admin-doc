@@ -63,7 +63,6 @@ module.exports = {
             collapsable: false,
             children: [
               'deploy',
-              'dev-validate',
               'format',
               'generator',
               'socket',
@@ -72,6 +71,7 @@ module.exports = {
               'i18n',
               'file',
               'workflow',
+              'other-features',
             ]
           },
         ]
