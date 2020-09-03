@@ -19,4 +19,6 @@
 
 需求是新建表单时，用户输入过的内容能够再次提示出来。使用 [classgraph](https://github.com/classgraph/classgraph) 在初始化时扫描所有带有 `@QueryHistoryField` 注解的实体属性，形成一个白名单，只有改名单内的属性才能进行历史查询，这样防范了 sql 注入的问题。
 
-前端访问 `/query/history` 接口，参数为 `(String table, String fields)` ，其中 fields 支持逗号拼接，也就是查询一张表的多个字段的历史记录，table 和 fields 可驼峰可下划线，进行了兼容处理
+`@QueryHistoryField` 支持 value 属性，默认不写 value 的情况，将属性名进行驼峰转下划线，进行 sql 查询；当属性名和表字段不一致时，可自行指定 value 的值为表字段名。
+
+前端访问 `/query/history` 接口，参数为 `(String table, String fields)` ，其中 fields 支持逗号拼接，也就是查询一张表的多个字段的历史记录，table 和 fields 可驼峰可下划线，已进行了兼容处理
