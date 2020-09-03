@@ -27,7 +27,7 @@
 upload:
   type: local # 切换方式
   local:
-    path: D:\project\java\submarine-admin-backend\src\main\resources\public\
+    path: ./src/main/resources/public/
   oss:
     namespace: xxxx # 上传到某一个文件夹
     endpoint: xxxx
@@ -41,7 +41,7 @@ upload:
 
 业务表中存储的都是 file_store 表的 id，多个文件时可逗号拼接存储，所以前端最后获取到的是逗号拼接的 id，前端调用接口先获取到文件的信息，其中包含原始的文件名，url 等信息，于是前端可下载并重命名为原始文件名。
 
-前端已经封装好了 `ImgUpload` 组件，可以非常方便的使用。路径为 `/src/components/ImgUpload`
+前端已经封装好了 `ImgUpload` 组件，可以非常方便的使用。路径为 `/src/components/ImgUpload`，组件也支持图片压缩功能。
 
 ## 进阶
 
