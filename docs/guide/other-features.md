@@ -22,3 +22,7 @@
 `@QueryHistoryField` 支持 value 属性，默认不写 value 的情况，将属性名进行驼峰转下划线，进行 sql 查询；当属性名和表字段不一致时，可自行指定 value 的值为表字段名。
 
 前端访问 `/query/history` 接口，参数为 `(String table, String fields)` ，其中 fields 支持逗号拼接，也就是查询一张表的多个字段的历史记录，table 和 fields 可驼峰可下划线，已进行了兼容处理
+
+## 流水单编号生成
+
+如果业务的每条记录都需要增加流水号，可以让业务实体实现 `BizNumber` 接口，并调用 `BizNumberService.computeBizNumber` 方法，该方法返回一个一串数字，例如 `202009150002`，表示 2020 年 09 月 15 日的第 2 个单号
