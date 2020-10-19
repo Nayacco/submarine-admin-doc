@@ -24,6 +24,8 @@ Activiti 的代码和 Flowable 有很大一部分是相同的，Activiti7 已经
 
 另外流程引擎每次流转时，都会抛出 `FlowEvent` 事件，具体业务可以通过监听事件完成一些操作，当然也可以在流程图中配置执行监听器。
 
+如果需要在具体业务中手动操作工作流，这里封装好了 `FlowService` 这个类，它是对外的统一出口，你不应该使用 Act\* 开头的类，因为它是内部的实现细节
+
 ## 前端设计
 
 因为申请、审批、修订这三个界面的 form 部分是一样的，所以表单部分需要复用，于是前端进行了如下设计：每添加一个业务时，该业务只提供 form 部分，按钮弹窗都是由 formloader 提供，即由不同的 formloader 去加载 form 部分。这里我们实现好了 addFormloader 和 approveFormloader 两种，如果业务特殊，也可以自定义自己的 formloader，当点击 formloader 的按钮时，formloader 会触发 form.vue 的事件。
@@ -32,7 +34,7 @@ form.vue 需要提供一些自己的信息给 formloader 才能很好的展现�
 
 ```js
 export default {
-  // 流程定义的标识
+  // 业务的标识，即每个task配置的formKey
   name: "DestroySafeRecord",
   parentVariable: {
     // 自身 form 的宽度
@@ -66,13 +68,13 @@ export default {
 };
 ```
 
-目前实现的 formloader 会触发 form 组件的一些事件，如果是自定义的 formloader，也可以自定义事件。
+目前实现的 formloader 会触发 form 组件上述的 4 种事件，如果是自定义的 formloader，也可以自定义事件。
 
 所有的 form 都应该在 `register.js` 中注册
 
 ## 核准
 
-ActTaskController 中实现好了通用的核准接口，即核准时不能修改表单数据，只能提交自己的核准意见和核准结果。如果核准人可以修改表单数据，或核准时要进行其他的业务操作，只能自己实现 approve 的 controller，先保存数据，然后调用 actTaskService.complete 方法。
+ActTaskController 中实现好了通用的核准接口，即核准时不能修改表单数据，只能提交自己的核准意见和核准结果。如果核准人可以修改表单数据，或核准时要进行其他的业务操作，只能自己实现 approve 的 controller，先保存数据，然后调用 FlowService.complete 方法。
 
 ## 流程图
 
